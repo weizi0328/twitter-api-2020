@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { getUser } = require('../_helpers')
+const { getUser ,imgurFileHandler} = require('../_helpers')
 const { User, Tweet, Followship, Like, Reply, sequelize } = require('../models')
 
 const userController = {
@@ -88,17 +88,21 @@ const userController = {
 	putUser: (req, res, next) => {
 		const { account, name, email, password, avatar, introduction, cover } = req.body
 		if (/\s/.test(account)||/\s/.test(password)) throw Error('Can not have space!', {}, Error.prototype.code = 402)
-		User.findByPk(req.params.id)
-			.then(user => {
+		const { file } = req
+		Promise.all([
+			User.findByPk(req.params.id),
+			imgurFileHandler(file)
+		])
+			.then(([user,filePath]) => {
 				if (!user) throw new Error('User is not exist!')
 				return user.update({
 					account,
 					name,
 					email,
 					password,
-					avatar,
+					avatar: filePath || user.avatar,
 					introduction,
-					cover
+					cover: filePath || user.cover,
 				})
 			})
 			.then((data) => {
@@ -205,13 +209,13 @@ const userController = {
 				tweetList.forEach((t)=>{
 					t.likeCount = 0
 					t.replyCount = 0
-					t.liked = false
+					t.isliked = false
 					like.forEach((i)=>{
 						if(t.id === i.TweetId){
 							t.likeCount++
 						}
 						if(i.UserId === currentUser && i.TweetId === t.id){
-							t.liked = true
+							t.isliked = true
 						}
 					})
 					reply.forEach((r)=>{

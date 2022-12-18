@@ -10,6 +10,7 @@ const cors = require('cors')
 const { generalErrorHandler } = require('./middleware/error-handler')
 const app = express()
 const port = process.env.PORT || 3000
+const path = require('path') 
 
 const corsOptions = {
 	origin: ['https://yhosutun2490.github.io', 'http://localhost:3000'],
@@ -17,6 +18,7 @@ const corsOptions = {
 	allowedHeaders: ['Content-Type', 'Authorization']
 }
 
+app.use('/upload', express.static(path.join(__dirname, 'upload')))
 app.use(express.urlencoded({ extended: true }))
 app.use(passport.initialize())
 app.use(express.json())

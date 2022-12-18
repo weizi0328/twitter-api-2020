@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-
+const upload = require('../middleware/multer')
 const passport = require('../config/passport')
 const { authenticated} = require('../middleware/auth')
 
@@ -23,7 +23,7 @@ router.get('/users/:id/replied_tweets', authenticated, userController.getUserRep
 router.get('/users/:id/followings', authenticated, userController.getUserFollowing)
 router.get('/users/:id/followers', authenticated, userController.getUserFollower)
 router.get('/users/:id', authenticated, userController.getUser)
-router.put('/users/:id', authenticated, userController.putUser)
+router.put('/users/:id', authenticated, upload.single('image'),userController.putUser)
 router.post('/users', userController.postUsers)
 
 

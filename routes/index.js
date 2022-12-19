@@ -13,7 +13,8 @@ const { generalErrorHandler } = require('../middleware/error-handler')
 
 router.use('/admin', admin)
 
-router.post('/login', passport.authenticate('local', { session: false }), userController.logIn)
+// router.post('/login', passport.authenticate('local', { session: false },(err,user,info)=>{if(err||!user){res.json({'errmessage':'unauth'})}  }), userController.logIn)
+router.post('/login', passport.authenticate('local', { session: false },(err,user,info)=>{if(info){req.info = info}  }), userController.logIn)
 
 router.get('/users/topFollow', authenticated, userController.getTopUser)
 router.get('/users/:id/likes', authenticated, userController.getUserlikes)

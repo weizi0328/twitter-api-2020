@@ -20,11 +20,11 @@ passport.use('local', new LocalStrategy(
 	(req, account, password, cb) => {
 		User.findOne({ where: { account } })
 			.then(user => {
-				if (!user) return cb(null, false, { message: 'account or password invalid!' })
+				if (!user) return cb(null, false, {message: 'account or password invalid!'})
 				if (user.dataValues.role !== 'user') return cb(null, false, { message: 'permission denied!' })
 				bcrypt.compare(password, user.password)
 					.then(res => {
-						if (!res) return cb(null, false, { message: 'account or password invalid!' })
+						if (!res) return cb(null, false, {message: 'account or password invalid!'})
 						return cb(null, user)
 					})
 			})
